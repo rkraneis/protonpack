@@ -28,9 +28,10 @@ class ListZippingSpliterator<T, O> implements Spliterator<O> {
             return false;
         }
         List<T> acc = new ArrayList<>(spliterators.size());
-        boolean hadNext = spliterators.stream()
-                .map(s -> s.tryAdvance(acc::add))
-                .allMatch(isEqual(Boolean.TRUE));
+        boolean hadNext = true;
+        for (Spliterator<T> s : spliterators) {
+            hadNext &= s.tryAdvance(acc::add);
+        }
         if (hadNext) {
             action.accept(combiner.apply(acc));
         }
